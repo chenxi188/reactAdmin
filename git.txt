@@ -3,3 +3,34 @@ git init
 
 添加所有文件到暂存区
 git add .
+
+clear
+
+
+git commit -m '产品添加功能完成'
+
+
+在git创建一个新仓库：
+
+初始化远端仓库名字为：origin
+git remote add origin git@github.com:chenxi188/reactAdmin.git
+
+推送到远程仓库origin 的master分支：
+git push -u origin master
+
+---------------------------
+创建dev并切换到对应分支：
+git checkout -b dev
+或
+$ git branch dev
+$ git checkout dev
+或
+git switch -c dev
+
+------------------------------
+切换分支：git switch master
+显示分支：git branch
+---------------------
+
+把dev分支推送到远端仓库：
+git push origin dev
