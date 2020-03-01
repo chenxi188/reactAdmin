@@ -31,6 +31,45 @@ git switch -c dev
 切换分支：git switch master
 显示分支：git branch
 ---------------------
-
+把所有文件添加到暂存区 git add .
+git commit -m '分支添加'
+------------------------------------
 把dev分支推送到远端仓库：
 git push origin dev
+
+======================================
+在文件夹test拉取代码：
+git clone xxxxxx
+
+进入test：cd test
+
+显示分支：git branch
+
+创建本地dev分支：git checkout -b dev origin/dev
+
+拉取dev分支： git pull origin dev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

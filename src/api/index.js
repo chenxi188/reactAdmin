@@ -24,7 +24,18 @@ export const reqUpdateCategory=({categoryId,categoryName})=>ajax(BASE+'/manage/c
 
 
 //获取产品列表
-export const reqProducts=({pageNum,pageSize})=>ajax(BASE+'/manage/product/list',{pageNum,pageSize})
+export const reqProducts=(pageNum,pageSize)=>ajax(BASE+'/manage/product/list',{pageNum,pageSize})
+
+/*
+搜索商品分页列表 (根据商品名称/商品描述)
+searchType(搜索的类型): productName/productDesc
+ */
+export const reqSearchProducts = ({pageNum, pageSize, searchName, searchType}) => ajax(BASE + '/manage/product/search', {
+    pageNum,
+    pageSize,
+    [searchType]: searchName,
+  })
+  
 //添加商品/修改商品：二合一接口，如果参数存在._id则为修改商品，否则为添加商品
 export const reqAddUpdatePro=(product)=>ajax(BASE+'/manage/product/'+(product._id?'update':'add'),product,'POST')
 
