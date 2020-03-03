@@ -36,7 +36,12 @@ git commit -m '分支添加'
 ------------------------------------
 把dev分支推送到远端仓库：
 git push origin dev
-
+----------------------------
+将dev分支合并到master分支：首先要切换到master分支：git switch master
+git merge dev
+-------------------------
+把master推送到远程仓库：
+git push orign master
 ======================================
 在文件夹test拉取代码：
 git clone xxxxxx
