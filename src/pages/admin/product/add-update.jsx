@@ -163,7 +163,7 @@ class AddUpdate extends Component{
         //card左
         const title=(
             <span>
-                <LinkButton>
+                <LinkButton onClick={()=>this.props.history.goBack()}>
                     <Icon type='arrow-left' style={{fontSize:20}} />                   
                 </LinkButton>
                 <span>添加商品</span>
