@@ -9,7 +9,7 @@ import {
     message
 } from 'antd'
 import LinkButton from '../../../components/link-button'
-import {reqProducts,reqSearchProducts} from '../../../api/' //【0】引入产品列表请求
+import {reqProducts,reqSearchProducts} from '../../../api/' //引入产品列表请求
 import {PAGE_SIZE} from '../../../utils/constans' //引入常量每页显示产品条数PAGE_SIZE=3
 
 
@@ -21,8 +21,8 @@ export default class Home extends Component{
         total:0,//商品总数
         products:[], 
         loading:false,
-        searchName:'', //【1】搜索关键词
-        searchType:'productName', //【2】按什么搜索：名称/描述 productName/productDesc
+        searchName:'', //搜索关键词
+        searchType:'productName', //按什么搜索：名称/描述 productName/productDesc
     }
     //Table的列名及对应显示的内容渲染
     initColumns=()=>{
@@ -57,10 +57,11 @@ export default class Home extends Component{
                 width:100,
                 title:'操作',
                 
-                render:(proObj)=>{
+                render:(proObj)=>{//【0】proObj当前商品对象
                     return(
                         <span>
-                            <LinkButton>详情</LinkButton>
+                            {/*【1】将product对象使用state传递给目标路由组件*/}
+                            <LinkButton onClick={()=>this.props.history.push('/product/detail',{proObj})}>详情</LinkButton>
                             <LinkButton>修改</LinkButton>
                         </span>
                     )
@@ -74,11 +75,11 @@ export default class Home extends Component{
         this.setState({loading:true}) //设置加载动画开始显示
         this.pageNum=pageNum //保存pageNum, 让其它方法可以看到
 
-        const {searchName,searchType}=this.state  //【10】
-        let result //【13】有两个result因此把result提出来定义
-        if(searchName){//【11】如果有搜索关键词就是关键词搜索，易错pageSize:PAGE_SIZE
+        const {searchName,searchType}=this.state  //
+        let result //有两个result因此把result提出来定义
+        if(searchName){//如果有搜索关键词就是关键词搜索，易错pageSize:PAGE_SIZE
             result=await reqSearchProducts({pageNum,pageSize:PAGE_SIZE,searchType,searchName})
-        }else{//【12】否则就是一般搜索
+        }else{//否则就是一般搜索
             result = await reqProducts(pageNum,PAGE_SIZE) // 常量：每页显示产品条数，
         }
     
@@ -106,26 +107,26 @@ export default class Home extends Component{
     }
 
     render(){
-        //【3】state数据解构，简化使用
+        //state数据解构，简化使用
         const {products,loading,total,searchName,searchType}=this.state
 
-        //【4】card左侧内容
+        //card左侧内容
         const title=(
             <span>
                 <Select 
-                value={searchType} /*【5】*/
+                value={searchType} /**/
                 style={{width:150,}} 
-                onChange={value=>this.setState({searchType:value})}/*【6】*/
+                onChange={value=>this.setState({searchType:value})}/**/
                 >
                     <Option value='productName'>按名称搜索</Option>
                     <Option value='productDesc'>按描述搜索</Option>
                 </Select>
                 <Input placeholder='关键字' style={{width:150,margin:'0 8px'}} 
-                value={searchName}/*【7】*/
-                onChange={event=>this.setState({searchName:event.target.value})}/*【8】*/
+                value={searchName}/**/
+                onChange={event=>this.setState({searchName:event.target.value})}/**/
                  />
                 <Button type='primary'
-                onClick={()=>this.getProducts(1)} //【9】点击搜索对应产品
+                onClick={()=>this.getProducts(1)} //点击搜索对应产品
                 >搜索</Button>
             </span>
         )
