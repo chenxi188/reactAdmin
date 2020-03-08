@@ -9,7 +9,7 @@ import {
     message
 } from 'antd'
 import LinkButton from '../../../components/link-button'
-import {reqProducts,reqSearchProducts} from '../../../api/' //引入产品列表请求
+import {reqProducts,reqSearchProducts,reqUpdateStatus} from '../../../api/' //引入入api请求函数
 import {PAGE_SIZE} from '../../../utils/constans' //引入常量每页显示产品条数PAGE_SIZE=3
 
 
@@ -24,6 +24,18 @@ export default class Home extends Component{
         searchName:'', //搜索关键词
         searchType:'productName', //按什么搜索：名称/描述 productName/productDesc
     }
+    
+    //【6】更新商品上下架状态
+    updateStatus = async (productId,status)=>{
+        const result=await reqUpdateStatus(productId,status)
+        if(result.status===0){
+            message.success('商品上下架状态更新成功')
+            //【8】更新成功后重新获取正确的商品分页此时传入的页码来源于7步存入的页码
+            this.getProducts(this.pageNum)
+        }
+    }
+
+
     //Table的列名及对应显示的内容渲染
     initColumns=()=>{
         this.columns=[
@@ -43,11 +55,17 @@ export default class Home extends Component{
             {
                 width:100,
                 title:'商品状态',
-                dataIndex:'status',
-                render:(status)=>{
+                //dataIndex:'status',//【1】注释掉
+                render:(proObj)=>{//【2】传入当前的商品对象
+                    const {_id,status}=proObj //【3】解构商品id和status
+                    const newStatus=status===1?2:1//【4】把商品的状态2换1，1换2
                     return(
                         <span>
-                            <Button type='primary'>{status===1 ? '下架' : '上架'}</Button>
+                            <Button 
+                            type='primary' 
+                            /*【5】调用更新状态函数把当前商品id及要更新的状态传过去*/
+                            onClick={()=>this.updateStatus(_id,newStatus)}>
+                                {status===1 ? '下架' : '上架'}</Button>
                             <span>{status===1 ? '在售':'已下架'}</span>
                         </span>
                     )
@@ -57,10 +75,10 @@ export default class Home extends Component{
                 width:100,
                 title:'操作',
                 
-                render:(proObj)=>{//【0】proObj当前商品对象
+                render:(proObj)=>{//proObj当前商品对象
                     return(
                         <span>
-                            {/*【1】将product对象使用state传递给目标路由组件*/}
+                            {/*将product对象使用state传递给目标路由组件*/}
                             <LinkButton onClick={()=>this.props.history.push('/product/detail',{proObj})}>详情</LinkButton>
                             <LinkButton>修改</LinkButton>
                         </span>
@@ -73,7 +91,7 @@ export default class Home extends Component{
     //请求产品列表放入state，后台分页
     getProducts=async(pageNum)=>{//pageNum为请求页码
         this.setState({loading:true}) //设置加载动画开始显示
-        this.pageNum=pageNum //保存pageNum, 让其它方法可以看到
+        this.pageNum=pageNum //【7】保存pageNum, 让其它方法可以看到
 
         const {searchName,searchType}=this.state  //
         let result //有两个result因此把result提出来定义
