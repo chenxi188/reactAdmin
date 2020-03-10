@@ -1,14 +1,41 @@
 import React, { Component } from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw,ContentState } from 'draft-js'; //【3】引入ContentState
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
+import htmlToDraft from 'html-to-draftjs'; //【0】显示现有html需要组件
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css' //引入编辑器样式，否则会乱七八糟
+import PropTypes from 'prop-types' //【1】引入proptypes用于接收父组件传值
 
 
 export default class RichText extends Component {
+  //【2】接收父组件传值
+  static propTypes={
+    detail:PropTypes.string
+  }
+
   state = {
     editorState: EditorState.createEmpty(),
+  }
+
+  //【4】rich-text官网拉到底找到把现成的字符串显示到富文本编辑框内
+  constructor(props) {
+    super(props)
+
+    const html = this.props.detail //解构出传过来的detail内的html数据
+
+    if (html) { // 【5】html如果有值, 根据html格式字符串创建一个对应的编辑对象
+      const contentBlock = htmlToDraft(html)
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks)
+      const editorState = EditorState.createWithContent(contentState)
+      this.state = {
+        editorState,
+      }
+    } else {//【6】没有则让富文本框创建空对象
+      this.state = {
+        editorState: EditorState.createEmpty(), // 创建一个没有内容的编辑对象
+      }
+    }
+
   }
 
   onEditorStateChange=(editorState) => { //标签写法改成如左写法

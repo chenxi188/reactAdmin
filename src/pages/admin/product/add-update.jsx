@@ -188,7 +188,7 @@ class AddUpdate extends Component{
     }
       
     render(){
-        //【1】解构需要的数据imgs
+        //【1】解构需要的数据detail
         const {isUpdate,product}=this
         const{pCategoryId,categoryId,imgs,detail}=product
 
@@ -289,13 +289,15 @@ class AddUpdate extends Component{
                     </Item>
 
                     <Item label='商品图片'>
-                        {/* 【2】imgs传给子组件 PicturesWall */}
+                        {/* imgs传给子组件 PicturesWall */}
                         <PicturesWall ref={this.pw} imgs={imgs} />
                     </Item> 
 
                     <Item label='商品详情' labelCol={{span: 2}} wrapperCol={{span: 20}}>
-                        {/**指定把richtext对象装进editor里 */}
-                        <RichText ref={this.editor} />
+                        {/**指定把richtext对象装进editor里 
+                         * 【2】传detail给子组件RichText
+                        */}
+                        <RichText ref={this.editor} detail={detail} />
                     </Item>
 
                     <Item >
