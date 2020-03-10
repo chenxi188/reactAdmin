@@ -1,6 +1,8 @@
 import React,{Component} from 'react'
 import { Upload, Icon, Modal,message } from 'antd';
-import {reqDeletPic} from '../../../api' //【1】
+import {reqDeletPic} from '../../../api' //删除图片api
+import {BASE_IMG_URL} from '../../../utils/constans' //【0】引入基础图片上传地址即：http://localhost:5000/upload/
+import PropTypes from 'prop-types' //【1】引入prop-types用于获取父组件传过来的数据
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -12,13 +14,39 @@ function getBase64(file) {
 }
 
 export default class PicturesWall extends Component {
+  //【2】接收父组件传过来的值 （非必须）
+  static propTypes={
+    imgs:PropTypes.array
+  }
+
+  /*{fileList: [       
+        uid: '-1', // 每个file都有自己唯一的id
+        name: 'xxx.png', // 图片文件名
+        status: 'done', // 图片状态: done-已上传, uploading: 正在上传中, removed: 已删除
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png', // 图片地址
+      },
+      ]*/
+
   constructor(props){
     super(props)
+
+    //【3】定义fileList
+    let fileList=[]
+    //【4】如果传来了imgs属性值
+    const {imgs}=this.props //解构imgs
+    if(imgs && imgs.length>0){//imgs存在且长度大于0
+      fileList=imgs.map((img,index)=>({//定义一个对象要额外加个括号
+        uid: -index, // 每个file都有自己唯一的id
+        name: img, // 图片文件名
+        status: 'done', // 图片状态: done-已上传, uploading: 正在上传中, removed: 已删除
+        url: BASE_IMG_URL + img
+      }))
+    }
 
     this.state={
       previewVisible: false,
       previewImage: '',
-      fileList: []
+      fileList
     }
   }
 
@@ -61,7 +89,7 @@ export default class PicturesWall extends Component {
   fileList: 所有已上传图片文件对象的数组
   官方文档：https://ant.design/components/upload-cn/#onChange
    */
-  handleChange = async ({ file,fileList }) => { //【3】async
+  handleChange = async ({ file,fileList }) => { //async
     console.log('handlechange:',file.status, fileList.length, file===fileList[fileList.length-1])
 
     // 一旦上传成功, 将当前上传的file的信息修正成最新的(name, url)
@@ -76,7 +104,7 @@ export default class PicturesWall extends Component {
       }else{
       message.error('上传错误')
       }
-    }else if(file.status==='removed'){//【2】如果文件的状态为移除，则删除服务器上对应图片名图片
+    }else if(file.status==='removed'){//如果文件的状态为移除，则删除服务器上对应图片名图片
       const result=await reqDeletPic(file.name)
       if(result.status===0){
         message.success('图片删除成功：'+file.name)

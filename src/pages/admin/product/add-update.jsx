@@ -32,30 +32,30 @@ class AddUpdate extends Component{
     
 
     //把获取到的categorys解析为options
-    initOptions= async (categorys)=>{ //【3】
+    initOptions= async (categorys)=>{ //
         const options = categorys.map((v,k)=>({ //返回一个字典，要额外加一个括号            
                 value: v._id,
                 label: v.name,
                 isLeaf: false,             
         }))
 
-    //【1】如果是一个二级分类商品的更新
+    //如果是一个二级分类商品的更新一
     const {isUpdate, product} = this
     const {pCategoryId} = product
     if(isUpdate && pCategoryId!=='0') {//当前功能是商品修改，且，一级分类不为0（父分类为0即表示只有一级分类）
-      //【2】获取对应的二级分类列表
+      //获取对应的二级分类列表
       const subCategorys = await this.getCategorys(pCategoryId)
-      //【4】生成二级下拉列表的options
+      //生成二级下拉列表的options
       const childOptions = subCategorys.map(c => ({
         value: c._id,
         label: c.name,
         isLeaf: true
       }))
 
-      //【5】找到当前商品对应的一级option对象
+      //找到当前商品对应的一级option对象
       const targetOption = options.find(option => option.value===pCategoryId)
 
-      //【6】关联对应的一级option上
+      //关联对应的一级option上
       targetOption.children = childOptions
     }
 
@@ -188,7 +188,7 @@ class AddUpdate extends Component{
     }
       
     render(){
-        //解构需要的数据
+        //【1】解构需要的数据imgs
         const {isUpdate,product}=this
         const{pCategoryId,categoryId,imgs,detail}=product
 
@@ -289,7 +289,8 @@ class AddUpdate extends Component{
                     </Item>
 
                     <Item label='商品图片'>
-                        <PicturesWall ref={this.pw} />
+                        {/* 【2】imgs传给子组件 PicturesWall */}
+                        <PicturesWall ref={this.pw} imgs={imgs} />
                     </Item> 
 
                     <Item label='商品详情' labelCol={{span: 2}} wrapperCol={{span: 20}}>
