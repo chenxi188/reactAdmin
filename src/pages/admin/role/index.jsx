@@ -11,6 +11,19 @@ import {reqRoles} from '../../../api'
 export default class Role extends Component{
     state={
          roles:[], //所有角色列表：连接Table datasource
+         role:{},//【2】选中的role
+    }
+
+    //【1】点击角色列表对应行的行为
+    onRow=(role)=>{
+        return{
+            onClick: event => { //点击行时执行以下
+                console.log('row onClick()', role)
+                this.setState({ //【3】把当前点击的行赋值到state里的role
+                    role
+                })
+            }
+        }
     }
 
     //获取角色列表数据，设置到state中
@@ -44,7 +57,7 @@ export default class Role extends Component{
 
 
     render(){
-        const {roles}=this.state
+        const {roles,role}=this.state //【4】取出role
 
         //card的左侧 （Button的disabled:按钮不可用）
         const title=(
@@ -58,11 +71,12 @@ export default class Role extends Component{
             <Card title={title}>
                 <Table
                 bordered /**边框 */
-                rowKey='_id' /**表格行 key 的取值，可以是字符串或一个函数 */
+                rowKey='_id' /**【5】表格行 key 的取值，可以是字符串或一个函数 */
                 dataSource={roles} /**数据源 */
                 columns={this.columns} /**列标题，及对应的数据源 */
                 pagination={{defaultPageSize:PAGE_SIZE}} /**分页设置默认分页数量 */
-                rowSelection={{type:'radio'}} /**第行前面加一个单选框antd文档找使用方法 */
+                rowSelection={{type:'radio',selectedRowKeys:[role._id]} } /**【6】selectedRowKeys根据4确定哪个是被选中状态；   第行前面加一个单选框antd文档找使用方法 */
+                onRow={this.onRow} /**【0】控制点击当前行的行为 */
                  />
             </Card>
         )
