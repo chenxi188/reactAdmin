@@ -6,24 +6,22 @@ import {
     message
 } from 'antd'
 import {PAGE_SIZE} from '../../../utils/constans'
+import {reqRoles} from '../../../api'
 
 export default class Role extends Component{
     state={
-        roles:[
-            {"_id": "5ca9eaa1b49ef916541160d3",
-            "name": "测试",
-            "create_time": 1554639521749,
-            "__v": 0,
-            "auth_time": 1558679920395,
-            "auth_name": "test007"},
+         roles:[], //所有角色列表：连接Table datasource
+    }
 
-            {"_id": "5ca9eaa1b49ef916541160d4",
-            "name": "产品",
-            "create_time": 1554639521749,
-            "__v": 0,
-            "auth_time": 1558679920395,
-            "auth_name": "test008"},
-        ], //Table datasource
+    //获取角色列表数据，设置到state中
+    getRoles=async()=>{
+        const result=await reqRoles()
+        if(result.status===0){
+            const roles=result.data
+            this.setState({
+                roles
+            })
+        }
     }
 
     //初始化表格列标题，及对应的数据源，dataIndex:对应api返回的数据名
@@ -37,7 +35,11 @@ export default class Role extends Component{
     }
 
     componentWillMount(){
-        this.initColumns()//运行初始表格列标题，及对应的数据源函数，把表格列数据赋值到this.columus上
+        this.initColumns() //函数：运行初始表格列标题，及对应的数据源函数，把表格列数据赋值到this.columus上
+    }
+
+    componentDidMount(){
+        this.getRoles() //函数：获取角色列表设置到state中
     }
 
 

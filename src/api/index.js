@@ -44,7 +44,8 @@ export const reqAddUpdatePro=(product)=>ajax(BASE+'/manage/product/'+(product._i
 export const reqDeletPic=(name)=>ajax(BASE+'/manage/img/delete',{name},'POST')
 
 
-
+//请求所有角色列表
+export const reqRoles=()=>ajax(BASE+'/manage/role/list')
 
 
 
