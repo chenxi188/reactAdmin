@@ -63,7 +63,7 @@ export default class Role extends Component{
         const title=(
             <span>
                 <Button type='primary' style={{marginRight:8}}>创建角色</Button>
-                <Button type='primary' disabled>设置角色权限</Button>
+                <Button type='primary' disabled={!role._id}>设置角色权限</Button>
             </span>
         )
                 
