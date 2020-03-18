@@ -7,15 +7,17 @@ import {
     message
 } from 'antd'
 import {PAGE_SIZE} from '../../../utils/constans'
-import {reqRoles,reqAddRole} from '../../../api' //【1】添加角色api
-import AddForm from './addForm'
+import {reqRoles,reqAddRole} from '../../../api' //添加角色api
+import AddForm from './addForm' //添加角色弹窗的表单
+import AuthForm from './authForm' //设置权限弹窗的表单
 
 
 export default class Role extends Component{
     state={
          roles:[], //所有角色列表：连接Table datasource
          role:{},//选中的role
-         isShowAdd: false, //是否显示添加界面
+         isShowAdd: false, //是否显示添加角色弹窗
+         isShowAuth:false, //是否显示设置权限弹窗
     }
 
     //点击角色列表对应行的行为
@@ -50,7 +52,7 @@ export default class Role extends Component{
             {title:'授权人',dataIndex:'auth_name'},           
         ]
     }
-    //【2】点添加角色弹窗的ok按钮：添加角色
+    //点添加角色弹窗的ok按钮：添加角色
     addRole=()=>{
         this.form.validateFields(async(err,value)=>{
             if(!err){
@@ -89,14 +91,14 @@ export default class Role extends Component{
 
 
     render(){
-        const {roles,role,isShowAdd}=this.state //取出isShowAdd
+        const {roles,role,isShowAdd,isShowAuth}=this.state //【1】娶出role； 取出isShowAuth
 
         //card的左侧 （Button的disabled:按钮不可用）
         const title=(
             <span>
-                {/* 点创建角色：显示创建角色的弹窗 */}
+                {/* 点创设置权限：显示对应弹窗；      点创建角色：显示创建角色的弹窗 */}
                 <Button type='primary' style={{marginRight:8}} onClick={()=>{this.setState({isShowAdd:true})}}>创建角色</Button>
-                <Button type='primary' disabled={!role._id}>设置角色权限</Button>
+                <Button type='primary' disabled={!role._id} onClick={()=>{this.setState({isShowAuth:true})}}>设置角色权限</Button>
             </span>
         )
                 
@@ -124,6 +126,21 @@ export default class Role extends Component{
                  >
                      {/* 传递子组件form的函数setForm:（接收一个参数form，令当前组件的form=传过来的form） */}
                      <AddForm setForm={(form) => this.form = form} />
+                 </Modal>
+
+
+                 {/* 设置权限弹窗 */}
+                 <Modal 
+                 title='设置权限'
+                 visible={isShowAuth} /*弹窗可见状态*/
+                 onOk={this.addAuth} /*点ok提交信息*/
+                 onCancel={()=>{
+                     this.setState({isShowAuth:false})
+                     
+                    }} /*点取消*/
+                 >
+                     {/*【2】把role传递给子组件 */}
+                     <AuthForm role={role}  />
                  </Modal>
             </Card>
         )
