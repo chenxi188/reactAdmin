@@ -50,6 +50,20 @@ export const reqRoles=()=>ajax(BASE+'/manage/role/list')
 
 
 
+
+
+
+
+
+
+
+
+
+
+// 添加角色
+export const reqAddRole=(roleName)=>ajax(BASE+'/manage/role/add',{roleName},'POST')
+
+
 // 天气接口
 export const reqWeather=(city) => {    
     const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
