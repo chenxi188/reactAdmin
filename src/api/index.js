@@ -54,6 +54,8 @@ export const reqUpdateRole=(role)=>ajax(BASE+'/manage/role/update',role,'POST')
 
 // 请求所有用户列表
 export const reqUsers=()=>ajax(BASE+'/manage/user/list')
+// 删除指定用户
+export const reqUserDel=(userId)=>ajax(BASE+'/manage/user/delete',{userId},'POST')
 
 
 // 天气接口
