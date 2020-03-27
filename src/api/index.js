@@ -46,24 +46,14 @@ export const reqDeletPic=(name)=>ajax(BASE+'/manage/img/delete',{name},'POST')
 
 //请求所有角色列表
 export const reqRoles=()=>ajax(BASE+'/manage/role/list')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 添加角色
 export const reqAddRole=(roleName)=>ajax(BASE+'/manage/role/add',{roleName},'POST')
 // 更新角色,传过来的参数就是字典格式，所以role参数不用加花括号
 export const reqUpdateRole=(role)=>ajax(BASE+'/manage/role/update',role,'POST')
+
+
+// 请求所有用户列表
+export const reqUsers=()=>ajax(BASE+'/manage/user/list')
 
 
 // 天气接口
