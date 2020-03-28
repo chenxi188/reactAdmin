@@ -7,8 +7,9 @@ const Option=Select.Option
 
 class AddForm extends PureComponent{
  static propTypes={
-    setForm:PropTypes.func.isRequired, //接收父组件传过来的setForm函数
-    roles:PropTypes.array.isRequired, //【1】接收父组件传来的角色列表
+    setForm:PropTypes.func.isRequired, //接收父组件传过来的setForm函数，用于把当前页面的form功能传给你组件
+    roles:PropTypes.array.isRequired, //接收父组件传来的角色列表，用于展示在添加用户的下拉表角色选择中
+    user:PropTypes.object.isRequired, //【1】接收父组件传来的用户信息，用于展示在修改用户时的表单中
  }
 
  componentWillMount(){
@@ -36,7 +37,7 @@ class AddForm extends PureComponent{
       }
 
     const { getFieldDecorator }=this.props.form //form组件的获取表单验证函数
-    const {roles}=this.props //【2】解构出roles
+    const {roles,user}=this.props //解构出roles【2】解构出user
      return(
         //  表单样式控制 {...formItemLayout}
          <Form {...formItemLayout} > 
@@ -44,7 +45,7 @@ class AddForm extends PureComponent{
              <Item label='用户名'> 
                  {
                  getFieldDecorator('username',{
-                     initialValue:'',
+                     initialValue:user.username, //【3】展示传过来的要修改的用户名
                      rules:[
                          {required:true,message:'用户名必须输入'},
                          {min:4,max:12,message:'用户名必须大于4位小于12位'}
@@ -56,7 +57,7 @@ class AddForm extends PureComponent{
              <Item label='密码'>
                  {
                      getFieldDecorator('password',{
-                         initialValue:'',
+                         initialValue:'', //【4】不需要展示修改密码
                          rules:[
                              {required:true,message:'密码必须输出'},
                              {min:4,max:12,message:'密码必须大于4位小于12位'}
@@ -68,7 +69,7 @@ class AddForm extends PureComponent{
              <Item label='手机号'>
                  {
                      getFieldDecorator('phone',{
-                         initialValue:'',
+                         initialValue:user.phone, //【5】展示修改的手机
                          rules:[
                              {required:true,pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号'},
                         ]
@@ -79,7 +80,7 @@ class AddForm extends PureComponent{
              <Item label='邮箱'>
                 {
                      getFieldDecorator('email',{
-                         initialValue:'',
+                         initialValue:user.email, //【6】修改的邮箱
                          rules:[
                             {pattern: /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/,
                             message: '邮箱格式不正确'},
@@ -92,10 +93,12 @@ class AddForm extends PureComponent{
              <Item label='角色'>
                  {
                      getFieldDecorator('role_id',{
-                        rules:[{required:true,message:'角色必须选择'}]
+                        rules:[{required:true,message:'角色必须选择'}],
+                        initialValue:user.role_id,
+                    
                      })( //如果要让select的palceholder有效，此处不能写initialValue
                         <Select placeholder="请选择角色"> 
-                            {//【3】把角色写入option中
+                            {//把角色写入option中
                                 roles.map(role=>{
                                 return <Option key={role._id} value={role._id}>{role.name}</Option>
                                 })
