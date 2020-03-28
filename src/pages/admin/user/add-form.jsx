@@ -57,7 +57,7 @@ class AddForm extends PureComponent{
              <Item label='密码'>
                  {
                      getFieldDecorator('password',{
-                         initialValue:'', //【4】不需要展示修改密码
+                         initialValue:user.password, //【4】不需要展示修改密码
                          rules:[
                              {required:true,message:'密码必须输出'},
                              {min:4,max:12,message:'密码必须大于4位小于12位'}
