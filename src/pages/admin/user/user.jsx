@@ -1,14 +1,15 @@
 import React,{Component} from 'react'
 import {Card,Button,Table,Modal,message} from 'antd'
 import LinkButton from '../../../components/link-button/index'
-import {reqUsers,reqUserDel} from '../../../api' //【1】reqUserDel
+import {reqUsers,reqUserDel,reqUserAdd} from '../../../api' //【0】reqUserAdd
 import {formateDate} from '../../../utils/dateUtils'
+import AddForm from './add-form' //引入添加表单内容
 
 export default class User extends Component{
     state ={
         users:[],//用户列表
         roles:[],//所有角色列表
-        isShow:false,//控制弹窗Modal是否显示
+        isShow:false,//控制Modal弹窗是否显示
     }
 
 
@@ -34,7 +35,7 @@ export default class User extends Component{
             },
             {
                 title:'操作',
-                render:(user)=>(//【2】传入user到删除中
+                render:(user)=>(//传入user到删除中
                 <span>
                     <LinkButton onClick={() => this.showUpdate(user)}>修改</LinkButton>
                     <LinkButton onClick={() => this.deleteUser(user)}>删除</LinkButton>
@@ -56,7 +57,7 @@ export default class User extends Component{
         }
     }
 
-    //【3】删除指定用户
+    //删除指定用户
     deleteUser=(user)=>{
         Modal.confirm({
             title: `确定要删除${user.username}用户吗`,
@@ -70,6 +71,34 @@ export default class User extends Component{
           }) //Modal.confirm 用法详见antd文档3.x的 使用 confirm() 可以快捷地弹出确认框。
     }
 
+    //【1】Modal弹窗点ok后添加用户
+    handleOk=()=>{
+        //表单验证是否通过函数
+        this.form.validateFields(async(err,values)=>{
+            if(!err){//如果本地表单验证通过
+                this.setState({isShow:false}) //关闭弹窗
+                //1.收集表单数据
+                const user=values
+                console.log(user)
+                this.form.resetFields() //清空表单方便下次使用
+                //2.提交表单
+                const result=await reqUserAdd(user)
+                //3.更新列表
+                if(result.status===0){
+                    message.success(`${user.username}添加用户成功`)
+                    this.getUsers() //更新用户列表
+                }
+            }
+        })
+        
+    }
+
+    //【2】Modal弹窗点cancel，关闭弹窗
+    handleCancel=()=>{
+        this.setState({isShow:false})
+        this.form.resetFields() //清空表单方便下次使用
+    }
+
     
     componentWillMount () {
         this.initColumns()
@@ -80,8 +109,9 @@ export default class User extends Component{
     }
 
     render(){
-        //卡片标题部分
-        const title=<Button type='primary'>创建用户</Button>
+        //卡片标题部分显示Modal弹窗onClick={()=>this.setState({isShow:true})}
+        const title=<Button type='primary' onClick={()=>this.setState({isShow:true})}>创建用户</Button>
+
         return(
             <Card title={title}>
                 <Table
@@ -92,6 +122,18 @@ export default class User extends Component{
                 pagination={{defaultPageSize:2}}
                 />
 
+                {/* 引入AddForm组件 并把函数 form =>this.form=form 传过去（用于接收子组件传过来的form）*/}
+                <Modal
+                title='添加用户'
+                visible={this.state.isShow}
+                onOk={this.handleOk}
+                onCancel={this.handleCancel}
+                >
+                    <AddForm 
+                    setForm={form =>this.form=form}
+                    roles={this.state.roles} //把roles角色传给子组件
+                    />
+                </Modal>
 
 
             </Card>
