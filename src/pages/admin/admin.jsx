@@ -12,7 +12,7 @@ import Category from './category' //产品分类
 import Product from './product'
 
 import Role from './role' //角色管理页面
-import User from './user' //用户管理页面
+import User from './user/user' //用户管理页面
 
 import Bar from './charts/bar' //图表页面
 import Pie from './charts/pie'

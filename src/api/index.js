@@ -4,11 +4,14 @@ import {message} from 'antd' //借用antd返回信息组件
 // const BASE = 'http://localhost:5000'
 const BASE = ''
 
+/*
 //导出一个函数，第1种写法
 //登录接口函数
-// export function reqLogin(username,password){
-//     return ajax('login',{username,password},'POST')
-// }
+ export function reqLogin(username,password){
+     return ajax('login',{username,password},'POST')
+ }
+*/
+
 
 //导出一个函数，第2种写法
 // 登录接口函数
@@ -38,32 +41,29 @@ export const reqSearchProducts = ({pageNum, pageSize, searchName, searchType}) =
   
 //添加商品/修改商品：二合一接口，如果参数存在._id则为修改商品，否则为添加商品
 export const reqAddUpdatePro=(product)=>ajax(BASE+'/manage/product/'+(product._id?'update':'add'),product,'POST')
-
-
 // 删除服务器上指定名称图片
 export const reqDeletPic=(name)=>ajax(BASE+'/manage/img/delete',{name},'POST')
 
 
 //请求所有角色列表
 export const reqRoles=()=>ajax(BASE+'/manage/role/list')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 添加角色
 export const reqAddRole=(roleName)=>ajax(BASE+'/manage/role/add',{roleName},'POST')
 // 更新角色,传过来的参数就是字典格式，所以role参数不用加花括号
 export const reqUpdateRole=(role)=>ajax(BASE+'/manage/role/update',role,'POST')
+
+
+// 请求所有用户列表
+export const reqUsers=()=>ajax(BASE+'/manage/user/list')
+// 删除指定用户
+export const reqUserDel=(userId)=>ajax(BASE+'/manage/user/delete',{userId},'POST')
+//添加/修改用户(如果存在._id说明是更新就用update拼接路径，否则就是添加用户)
+export const reqUserAdd=(user)=>ajax(BASE+'/manage/user/'+(user._id?'update':'add'),user,'POST')
+
+
+
+
+
 
 
 // 天气接口
