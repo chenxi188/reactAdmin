@@ -163,7 +163,7 @@ export default class Home extends Component{
                 dataSource={products}
                 loading={loading}
                 columns={this.columns}
-                pagination={{/*分页配置*/
+                pagination={{/*【1】分页配置*/
                     current: this.pageNum,
                     total,
                     defaultPageSize: PAGE_SIZE,
