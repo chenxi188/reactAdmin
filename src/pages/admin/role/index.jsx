@@ -167,7 +167,14 @@ export default class Role extends Component{
                 dataSource={roles} /**数据源 */
                 columns={this.columns} /**列标题，及对应的数据源 */
                 pagination={{defaultPageSize:PAGE_SIZE}} /**分页设置默认分页数量 */
-                rowSelection={{type:'radio',selectedRowKeys:[role._id]} } /**selectedRowKeys根据4确定哪个是被选中状态；   第行前面加一个单选框antd文档找使用方法 */
+                rowSelection={{type:'radio',
+                selectedRowKeys: [role._id],
+                    onSelect: (role) => { // 【1】选择某个radio时回调
+                    this.setState({
+                        role
+                    })
+                    }
+                } } /**selectedRowKeys根据4确定哪个是被选中状态；   第行前面加一个单选框antd文档找使用方法 */
                 onRow={this.onRow} /**控制点击当前行的行为 */
                  />
 
