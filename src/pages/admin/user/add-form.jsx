@@ -54,7 +54,10 @@ class AddForm extends PureComponent{
                  }     
              </Item>
 
-             <Item label='密码'>
+
+             {//如果是修改用户，则不显示密码框（接口未提供密码修改）
+             user._id ? null : (
+                <Item label='密码'>
                  {
                      getFieldDecorator('password',{
                          initialValue:user.password, //【4】不需要展示修改密码
@@ -65,6 +68,8 @@ class AddForm extends PureComponent{
                      })(<Input type='password' placeholder='请输入密码' />)
                  }           
              </Item>
+             )}
+             
 
              <Item label='手机号'>
                  {

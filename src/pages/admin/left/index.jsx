@@ -79,7 +79,7 @@ class LeftNav extends Component{
     if(username==='admin' || isPublic || menus.indexOf(key)!==-1) {
         return true
     } else if(item.children){ // 4. 如果当前用户有此item的某个子item的权限
-        return !!item.children.find(child =>  menus.indexOf(child.key)!==-1) //!强制转换成bool类型值
+        return !!item.children.find(child =>  menus.indexOf(child.key)!==-1) //!!:强制转换成bool类型值
     }
 
     return false

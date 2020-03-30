@@ -11,6 +11,7 @@ import {reqRoles,reqAddRole,reqUpdateRole} from '../../../api' //引入更新角
 import AddForm from './addForm' //添加角色弹窗的表单
 import AuthForm from './authForm' //设置权限弹窗的表单
 import memoryUtils from '../../../utils/memoryUtils' //引入记忆模块用于显示用户名
+import storageUtils from '../../../utils/storageUtils' //引入记忆模块用于显示用户名
 import {formateDate} from '../../../utils/dateUtils' //【1】时间格式化
 
 
@@ -103,19 +104,36 @@ export default class Role extends Component{
         //把接收过来的菜单传给当前role.menus => 到api/index.js里写更新角色接口函数
         role.menus=menus 
 
-        //【2】添加授权时间及授权人
+        //添加授权时间及授权人
         role.auth_time=Date.now()
         role.auth_name = memoryUtils.user.username
 
         //发送更新请求
         console.log(role)
         const result = await reqUpdateRole(role)
-        if (result.status===0){
+        /*if (result.status===0){     //老写法       
             message.success('设置角色权限成功！')
             this.getRoles()
         }else{
             message.error('更新角色权限失败')
-        }
+        }*/
+
+        if (result.status===0) {
+            // this.getRoles()
+            // 【1】如果当前更新的是自己角色的权限, 强制退出
+            if (role._id === memoryUtils.user.role_id) {
+              memoryUtils.user = {}
+              storageUtils.removeUser()
+              this.props.history.replace('/login')
+              message.success('当前用户角色权限成功,请重新登录')
+            } else {
+              message.success('设置角色权限成功')
+              this.setState({
+                roles: [...this.state.roles]
+              })
+            }
+      
+          }
 
 
     }
