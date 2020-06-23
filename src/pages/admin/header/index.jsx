@@ -1,4 +1,5 @@
 import React,{Component} from 'react'
+import {connect} from 'react-redux' //[1]
 import './header.less'
 import {formateDate} from '../../../utils/dateUtils.js' //时间格式化工具
 import memoryUtils from '../../../utils/memoryUtils' //内存中存取用户信息工具 默认导出，不用加花括号
@@ -106,7 +107,9 @@ class Header extends Component{
         const username = memoryUtils.user.username
 
         // 得到当前需要显示的title
-        const title = this.getTitle()
+        //const title = this.getTitle() 去除原来代码
+        //[3]新读headtitle方式
+        const title = this.props.headTitle
 
         return(
             <div className='header'>
@@ -134,4 +137,8 @@ class Header extends Component{
     }
 }
 
-export default withRouter(Header)
+//[2]把headTitle传给header组件
+export default connect(
+  state =>({headTitle:state.headTitle}),
+  {}
+)(withRouter(Header))

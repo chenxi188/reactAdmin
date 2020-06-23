@@ -1,10 +1,12 @@
 import React,{Component} from 'react'
+import {connect} from 'react-redux' //引入连接函数
 import {Link,withRouter} from 'react-router-dom' //withRouter：高阶函数，用于把非路由组件包装成路由组件
 import './left.less'
 import logo from '../../../assets/images/logo.png'
 import { Menu, Icon } from 'antd';
 import menuList from '../../../config/menuConfig.js'
 import memoryUtils from '../../../utils/memoryUtils'
+import {setHeadTitle} from '../../../redux/actions.js'//引入action
 
 
 const { SubMenu } = Menu;
@@ -65,7 +67,7 @@ class LeftNav extends Component{
 
 
 
-    //【2】判断当前登陆用户对item是否有权限
+    //判断当前登陆用户对item是否有权限
     hasAuth = (item) => {
     const {key, isPublic} = item //取出key,菜单是否是公共的（无需权限也可见）
 
@@ -87,17 +89,26 @@ class LeftNav extends Component{
 
 
 
-    //【0】getMenuItem用reduce函数重写方便对每一条进行控制
+    //getMenuItem用reduce函数重写方便对每一条进行控制
     getMenuItem=(menuList)=>{
         const path=this.props.location.pathname //得到当前请求路径
         return menuList.reduce((pre,item)=>{
 
-            // 【1】如果当前用户有item对应的权限, 才需要显示对应的菜单项
+            // 如果当前用户有item对应的权限, 才需要显示对应的菜单项
             if (this.hasAuth(item)) {
+                
+                //【1】判断item是否是当前对应的item
+                if (item.key===path || path.indexOf(item.key)===0) {
+                    // 更新redux中的headerTitle状态
+                    this.props.setHeadTitle(item.title)
+                }
+
+
                 if(!item.children){//1.没有子菜单添加：
                     pre.push((
                         <Menu.Item key={item.key}>
-                            <Link to={item.key}>
+                            {/**点击时回调action去reducer更新state */}
+                            <Link to={item.key} onClick={()=>this.props.setHeadTitle(item.title)}>
                                 <Icon type={item.icon}/>
                                 <span>{item.title}</span>
                             </Link>
@@ -176,4 +187,8 @@ class LeftNav extends Component{
 包装非路由组件, 返回一个新的组件
 新的组件向非路由组件传递3个属性: history/location/match
  */
-export default withRouter(LeftNav) 
+//容器组件，把action传给reducer用于改变state
+export default connect(
+    state=>({}),
+    {setHeadTitle}
+)(withRouter(LeftNav))
