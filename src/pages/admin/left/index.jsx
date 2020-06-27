@@ -1,12 +1,12 @@
 import React,{Component} from 'react'
-import {connect} from 'react-redux' //引入连接函数
+import {connect} from 'react-redux' //【1】引入连接函数
 import {Link,withRouter} from 'react-router-dom' //withRouter：高阶函数，用于把非路由组件包装成路由组件
 import './left.less'
 import logo from '../../../assets/images/logo.png'
-import { Menu, Icon } from 'antd';
-import menuList from '../../../config/menuConfig.js'
-import memoryUtils from '../../../utils/memoryUtils'
-import {setHeadTitle} from '../../../redux/actions.js'//引入action
+import { Menu, Icon } from 'antd' //引入antd组件
+import menuList from '../../../config/menuConfig.js'  //保存左导航菜单
+// import memoryUtils from '../../../utils/memoryUtils' 【2】此行删除
+import {setHeadTitle} from '../../../redux/actions.js'//【3】引入action，用于管理右侧头部标题
 
 
 const { SubMenu } = Menu;
@@ -14,7 +14,7 @@ const { SubMenu } = Menu;
 class LeftNav extends Component{
 
     state = {
-        collapsed: false,
+        collapsed: false, //控制左导航收缩状态
       };
       
     //   控制左侧导航收缩
@@ -24,7 +24,9 @@ class LeftNav extends Component{
         });
       };
 
-    // 根据配置文件自动写入左侧导航到页面
+
+
+    // 用map函数写的：根据配置文件自动写入左侧导航到页面
     getMenuItem_map=(menuList)=>{
         // 得到当前请求的路由路径
         const path = this.props.location.pathname
@@ -71,8 +73,8 @@ class LeftNav extends Component{
     hasAuth = (item) => {
     const {key, isPublic} = item //取出key,菜单是否是公共的（无需权限也可见）
 
-    const menus = memoryUtils.user.role.menus //得到对应角色拥有的菜单
-    const username = memoryUtils.user.username //得到当前登录用户名
+    const menus = this.props.user.role.menus //得到对应角色拥有的菜单【5】改memoryUtils.user.role.menus
+    const username = this.props.user.username //得到当前登录用户名 【6】改改memoryUtils.user.role.menus
     /*
     1. 如果当前用户是admin
     2. 如果当前item是公开的
@@ -89,7 +91,7 @@ class LeftNav extends Component{
 
 
 
-    //getMenuItem用reduce函数重写方便对每一条进行控制
+    //使用reduce() + 递归调用写的根据menu的数据数组生成对应的标签数组：getMenuItem用reduce函数重写方便对每一条进行控制
     getMenuItem=(menuList)=>{
         const path=this.props.location.pathname //得到当前请求路径
         return menuList.reduce((pre,item)=>{
@@ -158,6 +160,11 @@ class LeftNav extends Component{
     render(){
         // 得到当前请求的路由路径
         let path=this.props.location.pathname
+        console.log('render()', path)
+        if(path.indexOf('/product')===0) { // 当前请求的是商品或其子路由界面
+            path = '/product'
+        }
+        
         // 得到需要打开菜单项的key
         const openKey = this.openKey
 
@@ -187,8 +194,8 @@ class LeftNav extends Component{
 包装非路由组件, 返回一个新的组件
 新的组件向非路由组件传递3个属性: history/location/match
  */
-//容器组件，把action传给reducer用于改变state
+//【4】容器组件，把action传给当前组件，用于通过reducer更改state
 export default connect(
-    state=>({}),
+    state=>({user:state.user}),
     {setHeadTitle}
 )(withRouter(LeftNav))

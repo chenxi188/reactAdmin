@@ -1,6 +1,6 @@
 import React,{Component} from 'react'
 import {Redirect,Route,Switch} from 'react-router-dom' //引入路由组件
-// import memoryUtils from '../../utils/memoryUtils'
+// import memoryUtils from '../../utils/memoryUtils' 【1】去除此行
 import { Layout } from 'antd'; //引入antd的页面布局
 import LeftNav from './left' //因为文件名是index所以可省略
 import Header from './header/index' 
@@ -17,7 +17,7 @@ import User from './user/user' //用户管理页面
 import Bar from './charts/bar' //图表页面
 import Pie from './charts/pie'
 import Line from './charts/line'
-import { connect } from 'react-redux'
+import { connect } from 'react-redux' //【2】引入
 
 
 const { Footer, Sider, Content } = Layout;
@@ -29,7 +29,7 @@ class Admin extends Component{
 
     render(){
         // 读取memoryUtils里的user数据，如果不存在就跳转到登录页面
-        const user=this.props.user  //memoryUtils.user
+        const user=this.props.user  //memoryUtils.user 【4】改用3处传入的用户数据
         if(!user || !user._id){
             return <Redirect to='/login'/>
         }
@@ -65,6 +65,7 @@ class Admin extends Component{
         )
     }
 }
+//【3】connect把用户数据传入当前组件备用
 export default connect(
     state=>({user:state.user}),
     {}

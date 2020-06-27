@@ -10,13 +10,14 @@ import {PAGE_SIZE} from '../../../utils/constans'
 import {reqRoles,reqAddRole,reqUpdateRole} from '../../../api' //引入更新角色函数requpdaterole；   添加角色api
 import AddForm from './addForm' //添加角色弹窗的表单
 import AuthForm from './authForm' //设置权限弹窗的表单
-import memoryUtils from '../../../utils/memoryUtils' //引入记忆模块用于显示用户名
-import storageUtils from '../../../utils/storageUtils' //引入记忆模块用于显示用户名
-import {formateDate} from '../../../utils/dateUtils' //【1】时间格式化
+import {formateDate} from '../../../utils/dateUtils' //时间格式化
 
+import {connect} from 'react-redux' //【1】引入，删除以下两行
+// import memoryUtils from '../../../utils/memoryUtils' //引入记忆模块用于显示用户名
+// import storageUtils from '../../../utils/storageUtils' //引入记忆模块用于显示用户名
+import {logout} from '../../../redux/actions' //【2】引入
 
-export default class Role extends Component{
-    
+class Role extends Component{   
     constructor (props) {
         super(props)
         //创建一个auth的ref用于父子组件传值
@@ -55,7 +56,7 @@ export default class Role extends Component{
 
     //初始化表格列标题，及对应的数据源，dataIndex:对应api返回的数据名
     initColumns=()=>{
-        //【2】调用函数格式化时间戳
+        //调用函数格式化时间戳
         this.columns=[
             {title:'角色名称',dataIndex:'name'},
             {title:'创建时间',dataIndex:'create_time',render:(create_time)=>formateDate(create_time)},
@@ -106,7 +107,7 @@ export default class Role extends Component{
 
         //添加授权时间及授权人
         role.auth_time=Date.now()
-        role.auth_name = memoryUtils.user.username
+        role.auth_name = this.props.user.username //【4】改this.props memoryUtils
 
         //发送更新请求
         console.log(role)
@@ -120,11 +121,12 @@ export default class Role extends Component{
 
         if (result.status===0) {
             // this.getRoles()
-            // 【1】如果当前更新的是自己角色的权限, 强制退出
-            if (role._id === memoryUtils.user.role_id) {
-              memoryUtils.user = {}
-              storageUtils.removeUser()
-              this.props.history.replace('/login')
+            // 如果当前更新的是自己角色的权限, 强制退出
+            if (role._id === this.props.user.role_id) { //【5】memoryUtils
+            //   memoryUtils.user = {} 注销以下三行
+            //   storageUtils.removeUser()
+            //   this.props.history.replace('/login')
+              this.props.logout() //【6】退出登录action
               message.success('当前用户角色权限成功,请重新登录')
             } else {
               message.success('设置角色权限成功')
@@ -162,20 +164,20 @@ export default class Role extends Component{
         return(
             <Card title={title}>
                 <Table
-                bordered /**边框 */
-                rowKey='_id' /**表格行 key 的取值，可以是字符串或一个函数 */
-                dataSource={roles} /**数据源 */
-                columns={this.columns} /**列标题，及对应的数据源 */
-                pagination={{defaultPageSize:PAGE_SIZE}} /**分页设置默认分页数量 */
-                rowSelection={{type:'radio',
-                selectedRowKeys: [role._id],
-                    onSelect: (role) => { // 【1】选择某个radio时回调
-                    this.setState({
-                        role
-                    })
-                    }
-                } } /**selectedRowKeys根据4确定哪个是被选中状态；   第行前面加一个单选框antd文档找使用方法 */
-                onRow={this.onRow} /**控制点击当前行的行为 */
+                    bordered /**边框 */
+                    rowKey='_id' /**表格行 key 的取值，可以是字符串或一个函数 */
+                    dataSource={roles} /**数据源 */
+                    columns={this.columns} /**列标题，及对应的数据源 */
+                    pagination={{defaultPageSize:PAGE_SIZE}} /**分页设置默认分页数量 */
+                    rowSelection={{type:'radio',
+                    selectedRowKeys: [role._id],
+                        onSelect: (role) => { // 选择某个radio时回调
+                        this.setState({
+                            role
+                        })
+                        }
+                    } } /**selectedRowKeys根据4确定哪个是被选中状态；   第行前面加一个单选框antd文档找使用方法 */
+                    onRow={this.onRow} /**控制点击当前行的行为 */
                  />
 
                 {/* 添加角色弹窗 */}
@@ -207,3 +209,8 @@ export default class Role extends Component{
         )
     }
 }
+//【3】connect
+export default connect(
+    state =>({user:state.user}),
+    {logout}
+)(Role)
