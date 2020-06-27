@@ -1,16 +1,18 @@
 import React,{Component} from 'react'
-import {connect} from 'react-redux' //[1]
+import {connect} from 'react-redux' //加入react-redux
 import './header.less'
 import {formateDate} from '../../../utils/dateUtils.js' //时间格式化工具
-import memoryUtils from '../../../utils/memoryUtils' //内存中存取用户信息工具 默认导出，不用加花括号
-import storageUtils from '../../../utils/storageUtils' //删除localstorage中的用户登录数据
+// 【1】以下两行用不到去掉
+// import memoryUtils from '../../../utils/memoryUtils' //内存中存取用户信息工具 默认导出，不用加花括号
+// import storageUtils from '../../../utils/storageUtils' //删除localstorage中的用户登录数据
 import {reqWeather} from '../../../api/index' //引入接口函数，非默认导出，加花括号
-
 import {withRouter} from 'react-router-dom' //用于包装当前组件，使其具体路由的3属性history
 import menuList from '../../../config/menuConfig.js' //导入导航配置菜单 
 
 import {Modal} from 'antd'
 import LinkButton from '../../../components/link-button/index'
+
+import {logout} from '../../../redux/actions' //引入logout action
 
 class Header extends Component{
 
@@ -48,7 +50,7 @@ class Header extends Component{
     //异步获取天气
     getWeather = async () => {
         //解构天气小图标，天气
-        const {dayPictureUrl, weather} = await reqWeather('徐州')
+        const {dayPictureUrl, weather} = await reqWeather('上海')
         //更新状态
         this.setState({dayPictureUrl, weather})
         
@@ -64,13 +66,28 @@ class Header extends Component{
         },1000)
     }
 
-    //退出登录
+
+    /*
+  【3】退出登陆
+   */
+  loginOut = () => {
+    // 显示确认框
+    Modal.confirm({
+      content: '确定退出吗?',
+      onOk: () => {
+        console.log('OK', this)
+        this.props.logout()
+      }
+    })
+  }
+
+    /**退出登录
     loginOut=()=>{
         Modal.confirm({
             title: '确定要退出登录吗?',
             content: '是请点确定，否则点取消',
             onOk:()=> {//改成前头函数，因为下面要用到this.props.history.replace()
-              console.log('OK');
+              console.log('OK')
               //删除localstorage中登录信息。及内存中登录信息
               storageUtils.removeUser()
               memoryUtils.user={}
@@ -83,6 +100,9 @@ class Header extends Component{
           })
         
     }
+*/
+
+
 
 //在第一次render()之后执行一次
    //一般在此执行异步操作: 发ajax请求启动定时器
@@ -103,12 +123,13 @@ class Header extends Component{
     render(){
         //解构state内的数据
         const {curentTime,dayPictureUrl,weather} = this.state
-        //获取用户名
-        const username = memoryUtils.user.username
+        //获取用户名【4】注释以下行改成从props读取
+        // const username = memoryUtils.user.username
+        const username=this.props.user.username
 
         // 得到当前需要显示的title
         //const title = this.getTitle() 去除原来代码
-        //[3]新读headtitle方式
+        //新读headtitle方式
         const title = this.props.headTitle
 
         return(
@@ -137,8 +158,8 @@ class Header extends Component{
     }
 }
 
-//[2]把headTitle传给header组件
+//把headTitle传给header组件【2】加user的state传入当前组件的props里备用
 export default connect(
-  state =>({headTitle:state.headTitle}),
-  {}
+  state =>({headTitle:state.headTitle,user:state.user}),
+  {logout}
 )(withRouter(Header))

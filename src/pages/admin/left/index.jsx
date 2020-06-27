@@ -97,7 +97,7 @@ class LeftNav extends Component{
             // 如果当前用户有item对应的权限, 才需要显示对应的菜单项
             if (this.hasAuth(item)) {
                 
-                //【1】判断item是否是当前对应的item
+                //判断item是否是当前对应的item
                 if (item.key===path || path.indexOf(item.key)===0) {
                     // 更新redux中的headerTitle状态
                     this.props.setHeadTitle(item.title)
