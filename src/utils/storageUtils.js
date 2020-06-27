@@ -1,5 +1,3 @@
-
-
 /*
 保存用户名到localStorage
 */

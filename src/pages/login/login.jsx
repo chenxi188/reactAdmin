@@ -1,26 +1,36 @@
 import React,{Component} from 'react'
-import login from '../../assets/images/logo.png'
+import logo from '../../assets/images/logo.png'
 import './login.less'
 import { Form, Icon, Input, Button, message } from 'antd';
-import {reqLogin} from '../../api/' //因为api文件夹下有index.js所以只要指定到文件夹即可
-import memoryUtils from '../../utils/memoryUtils'
-import storageUtils from '../../utils/storageUtils'
+
+//【0】以下3行用不到了，注释掉
+// import {reqLogin} from '../../api/' //因为api文件夹下有index.js所以只要指定到文件夹即可
+// import memoryUtils from '../../utils/memoryUtils'
+// import storageUtils from '../../utils/storageUtils'
+
 import {Redirect} from 'react-router-dom'
+import {connect} from 'react-redux' //【1】引入连接react和redux互联组件
+import {login} from '../../redux/actions.js' //【2】引入action动作
 
 
 class Login extends Component{
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
 
     handleSubmit = e => {
-        e.preventDefault();
+        e.preventDefault();//阻止事件的默认刷新等行为
+
         this.props.form.validateFields(async(err, values) => {
           if (!err) {//本地校验成功后执行
             //console.log('在此处发起axios请求验证用户名，密码', values);
             const {username,password}=values
-            const result=await reqLogin(username,password)
-            if (result.status===0){//登录成功执行的代码
+
+            // const result=await reqLogin(username,password)【4】注释掉此处写出以下行
+            this.props.login(username,password)
+
+            /**【5】用不到，注释掉
+             * if (result.status===0){//登录成功执行的代码
                 message.success('登陆成功')
                 // 保存user
                 const user = result.data
@@ -29,12 +39,18 @@ class Login extends Component{
 
                 //跳转到后台界面 或 this.props.history.replace('/')不提供后退功能
                 this.props.history.push('/') //替换跳转，可以后退
+            
+
             }else{//登录失败执行的部分
-                message.error(result.msg)
+                // message.error(result.msg) 
+                console.log('登录失败')
             }
+            */
+
             // reqLogin(username,password).then(response=>{
             //     console.log(response.data)
             // }).catch()
+
           }else{
               console.log('验证失败')
           }
@@ -59,9 +75,11 @@ class Login extends Component{
 
     render(){
         // 如果用户已经登陆, 自动跳转到管理界面/admin
-        const user = memoryUtils.user
+        // const user = memoryUtils.user 【6】用不到注释掉
+        //【7】换成从props中取出用户数据
+        const user =this.props.user
         if(user && user._id) {
-            return <Redirect to='/'/>
+            return <Redirect to='/home'/>
         }
 
 
@@ -74,11 +92,13 @@ class Login extends Component{
            <div className='login'>
 
                <header className='login-header'>
-                   <img src={login} />
+                   <img src={logo} />
                    <h1>深蓝后台管理系统</h1>
                </header>
 
                <section className='login-content'>
+                   {/*【8】登录失败，错误信息即会显示*/}
+                    <div>{this.props.user.errorMsg}</div>
                     <h2>用户登录</h2>
                     <Form onSubmit={this.handleSubmit} className="login-form">
                         <Form.Item>
@@ -127,4 +147,8 @@ class Login extends Component{
     }
 }
 const WrapLogin = Form.create()(Login)
-export default WrapLogin
+//【3】用连接组件把login登录函数、user数据、做为props传入当前组件
+export default connect(
+    state=>({user:state.user}),
+    {login}
+)(WrapLogin)
