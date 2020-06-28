@@ -100,7 +100,7 @@ export default class Line extends React.Component {
       }
     }
     return (
-      <div style={{float: 'right', width: 750, height: 300}}>
+      <div style={{float: 'left', marginLeft:200, width: 750, height: 300}}>
         <Chart height={250} data={dv} scale={cols} forceFit>
           <Legend/>
           <Axis name="month"/>

@@ -1,6 +1,6 @@
 import React,{Component} from 'react'
 import {Redirect,Route,Switch} from 'react-router-dom' //引入路由组件
-// import memoryUtils from '../../utils/memoryUtils' 【1】去除此行
+// import memoryUtils from '../../utils/memoryUtils' 去除此行
 import { Layout } from 'antd'; //引入antd的页面布局
 import LeftNav from './left' //因为文件名是index所以可省略
 import Header from './header/index' 
@@ -17,7 +17,8 @@ import User from './user/user' //用户管理页面
 import Bar from './charts/bar' //图表页面
 import Pie from './charts/pie'
 import Line from './charts/line'
-import { connect } from 'react-redux' //【2】引入
+import { connect } from 'react-redux' //引入
+import NotFound from '../not-found/not-found' //【0】引入前台404组件
 
 
 const { Footer, Sider, Content } = Layout;
@@ -29,7 +30,7 @@ class Admin extends Component{
 
     render(){
         // 读取memoryUtils里的user数据，如果不存在就跳转到登录页面
-        const user=this.props.user  //memoryUtils.user 【4】改用3处传入的用户数据
+        const user=this.props.user  //memoryUtils.user 改用3处传入的用户数据
         if(!user || !user._id){
             return <Redirect to='/login'/>
         }
@@ -44,6 +45,8 @@ class Admin extends Component{
                     {/*路由配置在要显示的位置，即内容里 */}
                     <Content style={{backgroundColor:'#fff',margin:20,height:'100%'}}>
                         <Switch>
+                            {/* 【1】加一个绝对匹配，如果请求根路径，则跳转到/home页面 */}
+                            <Redirect exact from='/' to='/home'/> 
                             <Route path='/home' component={Home}/>
                             <Route path='/category' component={Category}/>
                             <Route path='/product' component={Product}/>
@@ -52,9 +55,9 @@ class Admin extends Component{
                             <Route path='/charts/bar' component={Bar}/>
                             <Route path='/charts/line' component={Line}/>
                             <Route path='/charts/pie' component={Pie}/>
-
+                            <Route component={NotFound}/> {/*【2】上面没有一个匹配, 直接显示404组件*/}
                             {/*如果以上都不匹配跳转到home页 */}
-                            <Redirect to='/home'/>
+                            {/* <Redirect to='/home'/> */}
                         </Switch>
                         
                     </Content>
@@ -65,7 +68,7 @@ class Admin extends Component{
         )
     }
 }
-//【3】connect把用户数据传入当前组件备用
+//connect把用户数据传入当前组件备用
 export default connect(
     state=>({user:state.user}),
     {}
