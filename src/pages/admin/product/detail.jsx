@@ -8,6 +8,7 @@ import LinkButton from '../../../components/link-button'
 import './product.less'
 import {BASE_IMG_URL} from '../../../utils/constans'
 import {reqCategory} from '../../../api/index'
+import memoryUtils from '../../../utils/memoryUtils' //【0】引入工具
 
 const Item=List.Item
 
@@ -20,7 +21,7 @@ export default class Detail extends Component{
     async componentDidMount () {
 
         // 得到当前商品的分类ID
-        const {pCategoryId, categoryId} = this.props.location.state.proObj
+        const {pCategoryId, categoryId} = memoryUtils.product //【1】=后改为当前，删除this.props.location.state.proObj
         if(pCategoryId==='0') { // 一级分类下的商品
           const result = await reqCategory(categoryId)
           const cName1 = result.data.name
@@ -45,11 +46,17 @@ export default class Detail extends Component{
         }
     
       }
+      
+
+    //【3】组件卸载之前清除数据
+    componentWillUnmount=()=>{
+        memoryUtils.product={}
+    }
 
     render(){
 
         //接收前一步传过来的商品对象数据
-        const {name, desc, price, detail, imgs}=this.props.location.state.proObj
+        const {name, desc, price, detail, imgs}= memoryUtils.product //【2】this.props.location.state.proObj
         const {cName1,cName2}=this.state
         const title=(
             <span>

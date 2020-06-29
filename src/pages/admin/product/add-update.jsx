@@ -12,6 +12,7 @@ import LinkButton from '../../../components/link-button'
 import {reqCategorys,reqAddUpdatePro} from '../../../api' //引入添加修改产品函数
 import PicturesWall from './pictures-wall'
 import RichText from './rich-text'
+import memoryUtils from '../../../utils/memoryUtils' //【1】引入
 
 const {Item}=Form
 const {TextArea}=Input
@@ -169,11 +170,17 @@ class AddUpdate extends Component{
 
     componentWillMount(){
         //取出产品列表修改按钮传过来的state
-        const product=this.props.location.state //如果是添加的就没有值，否则就有值
+        const product= memoryUtils.product //【1】换成从memory中读取。this.props.location.state //如果是添加的就没有值，否则就有值
         //保存是否更新标识到this
         this.isUpdate=!!product //双取反,若product有值，结果为ture
         //保存商品到this（如果没有，则保存空对象）
         this.product=product || {}
+    }
+
+
+    // 【2】在卸载之前清除保存的数据
+    componentWillUnmount () {
+        memoryUtils.product = {}
     }
       
     componentDidMount(){
