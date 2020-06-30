@@ -2,7 +2,7 @@ import ajax from './ajax'
 import jsonp from 'jsonp'
 import {message} from 'antd' //借用antd返回信息组件
 // const BASE = 'http://localhost:5000'
-const BASE = ''
+const BASE = '/api'
 
 /*
 //导出一个函数，第1种写法
@@ -15,7 +15,7 @@ const BASE = ''
 
 //导出一个函数，第2种写法
 // 登录接口函数
-export const reqLogin=(username,password)=>ajax(BASE+'login',{username,password},'POST')
+export const reqLogin=(username,password)=>ajax(BASE+'/login',{username,password},'POST')
 
 
 //获取产品一级/二级分类列表接口
